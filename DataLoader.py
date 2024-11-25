@@ -5,11 +5,11 @@ class DataReader:
         self.data_path = data_path
 
     def load_maintenance_logs(self):
-        with open(f"{self.data_path}/maintenance_logs.json") as f:
+        with open(f"{self.data_path}/maintenance_logs1.json") as f:
             return json.load(f)
     
     def load_vehicle_data(self):
-        with open(f"{self.data_path}/vehicle_info.json") as f:
+        with open(f"{self.data_path}/vehicle_info1.json") as f:
             return json.load(f)
     
     def load_route_data(self):
@@ -25,5 +25,5 @@ class DataReader:
             return json.load(f)
     
     def load_order_data(self):
-        with open(f"{self.data_path}/order_info.json") as f:
+        with open(f"{self.data_path}/order_info1.json") as f:
             return json.load(f)

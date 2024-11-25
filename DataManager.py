@@ -1,20 +1,24 @@
 import datetime
 import json
 import random
+from QueryProcessor import GeoDistributedQueryProcessor
 
 
 class DataManage:
     def __init__(self, db_clients):
         self.db_clients = db_clients
+        self.query_processor = GeoDistributedQueryProcessor(db_clients)
+        self.replication_map = {
+            "east" : "central",
+            "central" : "west",
+            "west" : "east",
+        }
     
     def get_shard_regions(self, record):
         '''
         gets all affected regions for a particular query. (Always contains maindb)
         '''
         shard_regions=[]
-
-        all_regions = [r.lower() for r in list(self.db_clients.keys())]
-        all_regions.remove('main')
 
         region_attr = record.get('region', "").lower()
         source_region_attr = record.get('source_region', "").lower()
@@ -32,8 +36,7 @@ class DataManage:
             return self.db_clients.keys()
         
         if source_region_attr and destination_region_attr and source_region_attr == destination_region_attr:
-            all_regions.remove(source_region_attr)
-            shard_regions.append(random.choice(all_regions))
+            shard_regions.append(self.replication_map[source_region_attr])
         
         shard_regions.insert(0, 'main')
         shard_regions = list(set(shard_regions))
@@ -47,32 +50,37 @@ class DataManage:
             self.db_clients[region][collection_name].insert_one(record)
 
 
-    def update_data(self, collection_name, query, update_value):
+    def update_data(self, collection_name, query):
         '''
         Queries maindb for data, finds affected regions and updates data in those affecting regions
         '''
+        try:
+            filter_query = query["filter_criteria"]
+            update_query = query["update_operation"]
 
-        #TODO replace find with retrieve_data
-        data = self.db_clients["main"]["SupplyOne"][collection_name].find(query)
+            data = self.query_processor.execute_query(filter_query, collection_name, nearest=True)
+            data = data[0]
+            shard_regions = self.get_shard_regions(data)
 
-        shard_regions = self.get_shard_regions(data)
-
-        for region in shard_regions:
-            self.db_clients[region][collection_name].update_one(query, {"$set": update_value})
+            for region in shard_regions:
+                self.db_clients[region][collection_name].update_one(filter_query[0]["$match"], update_query)
+        except Exception as e:
+            print("Error:", e)
 
 
     def delete_data(self, collection_name, query):
         '''
         Queries maindb for data, finds affected regions and deletes data in those affecting regions
         '''
+        try:
+            data = self.query_processor.execute_query(query, collection_name, nearest=True)
+            data = data[0]
+            shard_regions = self.get_shard_regions(data)
 
-        #TODO: replace find with retrieve_data
-        data = self.db_clients["main"]["SupplyOne"][collection_name].find(query)
-
-        shard_regions = self.get_shard_regions(data)
-
-        for region in shard_regions:
-            self.db_clients[region][collection_name].delete_one(query)
+            for region in shard_regions:
+                self.db_clients[region][collection_name].delete_one(query[0]["$match"])
+        except Exception as e:
+            print("Error:", e)
 
 
     def insert_records(self, collection_name, records):
