@@ -34,6 +34,7 @@ def connect_to_databases():
         except Exception as e:
             raise Exception(f"Failed to connect to {name} database: {e}")
     
+    print("Successfully connected to all databases.")
     return db_clients
 
 
