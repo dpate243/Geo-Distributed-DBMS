@@ -1,7 +1,7 @@
 __pycache__
 
 .env
-
+misc.py
 notebook.ipynb
 notebook2.ipynb
 
