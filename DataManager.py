@@ -50,13 +50,13 @@ class DataManage:
             self.db_clients[region][collection_name].insert_one(record)
 
 
-    def update_data(self, collection_name, query):
+    def update_data(self, collection_name, filter_query, update_query):
         '''
         Queries maindb for data, finds affected regions and updates data in those affecting regions
         '''
         try:
-            filter_query = query["filter_criteria"]
-            update_query = query["update_operation"]
+            #filter_query = query["filter_criteria"]
+            #update_query = query["update_operation"]
 
             data = self.query_processor.execute_query(filter_query, collection_name, nearest=True)
             data = data[0]
