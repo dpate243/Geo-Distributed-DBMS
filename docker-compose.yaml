@@ -113,13 +113,6 @@ services:
       start_period: 30s
     restart: always
 
-  supplyone:
-    build: 
-      dockerfile: Dockerfile-supplyone
-    container_name: supplyone
-    volumes:
-      - ./utils:/workdir/
-
   airflow-webserver:
     <<: *airflow-common
     command: webserver
