@@ -18,7 +18,7 @@ Once you enter the container shell run the main.py file
 
 ## 2. Trigger Airflow DAG
 
-- Login Airflow
+- Login Airflow at http://localhost:8080/
 
     ![alt text](images/login.png)
 
