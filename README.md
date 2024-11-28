@@ -2,6 +2,10 @@
 
 ## 1. Installation and Setup
 
+Open docker desktop
+
+Open command promt in the project foler
+
 shell:-
 
     docker compose up
