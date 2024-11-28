@@ -1,6 +1,6 @@
-from utils.connect import connect_to_databases
-from utils.DataManager import DataManage
-from utils.QueryProcessor import GeoDistributedQueryProcessor
+from connect import connect_to_databases
+from DataManager import DataManage
+from QueryProcessor import GeoDistributedQueryProcessor
 
 databases =  connect_to_databases()
 db_clients = {}

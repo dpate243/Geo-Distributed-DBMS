@@ -1,4 +1,4 @@
-from utils.QueryProcessor import GeoDistributedQueryProcessor
+from QueryProcessor import GeoDistributedQueryProcessor
 
 
 class DataManage:
