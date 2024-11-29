@@ -16,17 +16,32 @@ class GeoDistributedQueryProcessor:
         primary_collection = primary_cluster[collection_name]
         secondary_collection = secondary_cluster[collection_name]
 
-        primary_results = list(primary_collection.aggregate(query))
-        secondary_results = list(secondary_collection.aggregate(query))
-
-        combined_results = primary_results + secondary_results
-
-        json_strings = [json_util.dumps(doc) for doc in combined_results]
-        unique_json_strings = list(set(json_strings))
-
-        unique_results = [json_util.loads(item) for item in unique_json_strings]
-
-        return unique_results
+        primary_results = list(primary_collection.find())
+        secondary_results = list(secondary_collection.find())
+        
+        combined_docs = []
+        seen_ids = set()
+        
+        for doc in primary_results + secondary_results:
+            doc_id = doc.get('_id')
+            if doc_id not in seen_ids:
+                combined_docs.append(doc)
+                seen_ids.add(doc_id)
+        
+        temp_collection_name = f"temp_{collection_name}{primary}{secondary}"
+        temp_db = primary_cluster
+        temp_collection = temp_db[temp_collection_name]
+        
+        try:
+            if combined_docs:
+                temp_collection.insert_many(combined_docs)
+            
+            combined_results = list(temp_collection.aggregate(query))
+            
+            return combined_results
+        
+        finally:
+            temp_collection.drop()
 
 
     def get_cluster_preference(self):
