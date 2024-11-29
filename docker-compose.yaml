@@ -73,7 +73,7 @@ x-airflow-common:
     # If you want to use it, outcomment it and replace airflow.cfg with the name of your config file
     # AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/ : /opt/airflow/dags
+    - ${AIRFLOW_PROJ_DIR:-.}/:/opt/airflow/dags
 
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
