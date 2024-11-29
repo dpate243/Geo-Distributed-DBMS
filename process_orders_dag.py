@@ -109,7 +109,7 @@ with DAG(
     'process_orders_dag',
     default_args=default_args,
     description='A simple DAG to insert data into MongoDB',
-    schedule_interval=None,
+    schedule_interval='* * * * *',
     start_date=datetime(2023, 1, 1),
     catchup=False,
 ) as dag:
