@@ -1,0 +1,60 @@
+{
+    "collection_name": "Routes",
+    "query": [
+        {
+            "$lookup": {
+                "from": "Orders",
+                "let": {
+                    "source_wh": "$source_wh",
+                    "destination_wh": "$destination_wh"
+                },
+                "pipeline": [
+                    {
+                        "$match": {
+                            "$expr": {
+                                "$and": [
+                                    {
+                                        "$eq": [
+                                            "$source_warehouse_id",
+                                            "$$source_wh"
+                                        ]
+                                    },
+                                    {
+                                        "$eq": [
+                                            "$destination_warehouse_id",
+                                            "$$destination_wh"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "as": "related_orders"
+            }
+        },
+        {
+            "$addFields": {
+                "order_count": {
+                    "$size": "$related_orders"
+                }
+            }
+        },
+        {
+            "$match": {
+                "order_count": {
+                    "$gt": 0
+                }
+            }
+        },
+        {
+            "$project": {
+                "route_id": 1,
+                "source_wh": 1,
+                "destination_wh": 1,
+                "travel_time": 1,
+                "order_count": 1
+            }
+        }
+    ]
+}

@@ -1,0 +1,124 @@
+{
+    "collection_name": "Orders",
+    "query": [
+        {
+            "$group": {
+                "_id": {
+                    "warehouse_id": "$source_warehouse_id",
+                    "order_status": "$order_status"
+                },
+                "order_count": {
+                    "$sum": 1
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$_id.warehouse_id",
+                "order_statuses": {
+                    "$push": {
+                        "status": "$_id.order_status",
+                        "count": "$order_count"
+                    }
+                },
+                "total_orders": {
+                    "$sum": "$order_count"
+                }
+            }
+        },
+        {
+            "$project": {
+                "warehouse_id": "$_id",
+                "total_orders": 1,
+                "processed_orders": {
+                    "$sum": {
+                        "$map": {
+                            "input": {
+                                "$filter": {
+                                    "input": "$order_statuses",
+                                    "cond": {
+                                        "$eq": [
+                                            "$$this.status",
+                                            "processed"
+                                        ]
+                                    }
+                                }
+                            },
+                            "as": "processed",
+                            "in": "$$processed.count"
+                        }
+                    }
+                },
+                "unprocessed_orders": {
+                    "$sum": {
+                        "$map": {
+                            "input": {
+                                "$filter": {
+                                    "input": "$order_statuses",
+                                    "cond": {
+                                        "$ne": [
+                                            "$$this.status",
+                                            "processed"
+                                        ]
+                                    }
+                                }
+                            },
+                            "as": "unprocessed",
+                            "in": "$$unprocessed.count"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "$lookup": {
+                "from": "Warhouses",
+                "localField": "warehouse_id",
+                "foreignField": "warehouse_id",
+                "as": "warehouse_details"
+            }
+        },
+        {
+            "$addFields": {
+                "city": {
+                    "$arrayElemAt": [
+                        "$warehouse_details.city",
+                        0
+                    ]
+                },
+                "region": {
+                    "$arrayElemAt": [
+                        "$warehouse_details.region",
+                        0
+                    ]
+                }
+            }
+        },
+        {
+            "$project": {
+                "warehouse_id": 1,
+                "city": 1,
+                "region": 1,
+                "total_orders": 1,
+                "processed_orders": 1,
+                "unprocessed_orders": 1,
+                "processing_percentage": {
+                    "$multiply": [
+                        {
+                            "$divide": [
+                                "$processed_orders",
+                                "$total_orders"
+                            ]
+                        },
+                        100
+                    ]
+                }
+            }
+        },
+        {
+            "$sort": {
+                "processing_percentage": -1
+            }
+        }
+    ]
+}

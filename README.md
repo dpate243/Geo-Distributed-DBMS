@@ -2,23 +2,30 @@
 
 ## 1. Installation and Setup
 
-Open docker desktop
+1. Open docker desktop (for windows and mac)
 
-Open command promt in the project foler
+2. Make sure you get the *.env* file and paste it in the project directory root.
 
-shell:-
+3. Open command promt in the **project directory root**
 
-    docker compose up
-It will take up to 5 mins to compose up docker containers (do not close the shell)
+4. shell 1:-
 
-shell:-
+        docker compose up
+
+    It will take up to 5 mins to compose up docker containers (do not close the shell)
+
+5. shell 2:-
     
-    docker build -t supplyone .
-    docker run -it --rm supplyone
+        docker build -t supplyone .
+        docker run -it --rm supplyone
 
-Once you enter the container shell run the main.py file
+6. Once you enter the container in shell 2 run the main.py file
     
-    python main.py
+        python main.py
+
+    *optional args:
+    
+    --path : path to the json containing query in the format {'query':query, 'collection_name': collection}
 
 ## 2. Trigger Airflow DAG
 

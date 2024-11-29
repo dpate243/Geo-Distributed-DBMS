@@ -1,0 +1,24 @@
+{
+    "collection_name": "Orders",
+    "query": [
+        {
+            "$group": {
+                "_id": "$source_warehouse_id",
+                "total_order_size": {
+                    "$sum": "$order_size"
+                },
+                "total_order_count": {
+                    "$sum": 1
+                }
+            }
+        },
+        {
+            "$project": {
+                "warehouse_id": "$_id",
+                "total_order_size": 1,
+                "total_order_count": 1,
+                "_id": 0
+            }
+        }
+    ]
+}
