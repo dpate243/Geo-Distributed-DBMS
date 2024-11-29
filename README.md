@@ -4,7 +4,7 @@
 
 1. Open docker desktop (for windows and mac)
 
-2. Make sure you get the *.env* file and paste it in the project directory root.
+2. Make sure you have the *.env* file and paste it in the project directory root.
 
 3. Open command promt in the **project directory root**
 
@@ -27,7 +27,11 @@
     
     --path : path to the json containing query in the format {'query':query, 'collection_name': collection}
 
-## 2. Trigger Airflow DAG
+    *sample query
+
+    python main.py --path sample_queries/query4.json
+
+## 2. Airflow UI
 
 - Login Airflow at http://localhost:8080/
 
@@ -41,9 +45,4 @@
 
     ![alt text](images/dags.png)
 
-- Click on "Trigger DAG" button located on the top-right corner for "process_orders_dag"
-
-    ![alt text](images/trigger.png)
-
-
-## 3. Run Queries
+- Monitor the DAG, it will run at the start of every minute. Open the DAG and enable Auto-Refresh or refresh the page !
