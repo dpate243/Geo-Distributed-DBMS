@@ -46,3 +46,7 @@
     ![alt text](images/dags.png)
 
 - Monitor the DAG, it will run at the start of every minute. Open the DAG and enable Auto-Refresh or refresh the page !
+
+## 3. Custom Query Implementation
+
+- Add your custom query in the sample_query folder. Make sure it is a JSON file and follows the format of existing queries.
