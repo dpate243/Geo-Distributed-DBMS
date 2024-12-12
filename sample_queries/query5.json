@@ -1,0 +1,11 @@
+{
+    "collection_name": "Orders",
+    "query": [
+        {
+            "$match": {
+                "source_warehouse_id": "CHI-WH",
+                "destination_warehouse_id": "DAL-WH"
+            }
+        }
+    ]
+}
